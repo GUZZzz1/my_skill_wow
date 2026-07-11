@@ -1,4 +1,4 @@
 interface:
   display_name: "Skill 仓库维护"
-  short_description: "新增、校验、编目并发布仓库中的 Codex Skills。"
-  default_prompt: "Use $manage-skill-repository to add or update a skill in GUZZzz1/my_skill_wow, validate it, refresh the README catalog, and prepare the change for publishing."
+  short_description: "新增或修改仓库中的 Skill，并完成校验、评估与发布。"
+  default_prompt: "Use $manage-skill-repository to add or update a skill in this repository, validate and evaluate it, refresh installation docs, commit, push, and verify the remote result."

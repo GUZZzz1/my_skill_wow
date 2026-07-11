@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill 评估"
+  short_description: "按 D1-D9 扩展体系评估 Skill，给出准入与优化任务。"
+  default_prompt: "Use $evaluate-skill-quality to evaluate this skill, issue an admission recommendation, and produce an evidence-based optimization plan for the user and agent."

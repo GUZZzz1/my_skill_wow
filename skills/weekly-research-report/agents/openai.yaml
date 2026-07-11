@@ -1,4 +1,4 @@
 interface:
-  display_name: "研究生周报生成"
+  display_name: "研究生周报"
   short_description: "生成计算机研究生论文/科研 HTML 周报。"
   default_prompt: "Use $weekly-research-report to generate an HTML weekly research report; first ask me the required questions, then create the report."
