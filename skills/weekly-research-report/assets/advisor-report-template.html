@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{student_name}}_工作报告_{{report_period}}</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --paper: #ffffff;
+      --ink: #172033;
+      --muted: #667085;
+      --line: #d8dee9;
+      --blue: #2563eb;
+      --blue-soft: #eaf1ff;
+      --green: #0f766e;
+      --green-soft: #e7f5f1;
+      --amber: #b45309;
+      --amber-soft: #fff4df;
+      --red: #b42318;
+      --red-soft: #fff0ed;
+      --shadow: 0 18px 48px rgba(23, 32, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.65;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 32px));
+      margin: 28px auto 48px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    header {
+      padding: 34px 42px 28px;
+      color: #ffffff;
+      background:
+        linear-gradient(135deg, rgba(37, 99, 235, 0.94), rgba(15, 118, 110, 0.94)),
+        radial-gradient(circle at 90% 12%, rgba(255, 255, 255, 0.22), transparent 28%);
+    }
+
+    header .kicker {
+      margin: 0 0 8px;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.86;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.18;
+      font-weight: 700;
+    }
+
+    header .subtitle {
+      max-width: 820px;
+      margin: 16px 0 0;
+      font-size: 17px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding: 18px 42px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcff;
+    }
+
+    .meta div {
+      padding: 10px 12px;
+      border: 1px solid #e6ebf2;
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .meta span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .meta strong {
+      display: block;
+      margin-top: 2px;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    main {
+      padding: 30px 42px 42px;
+    }
+
+    section {
+      margin-top: 34px;
+    }
+
+    section:first-child {
+      margin-top: 0;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      padding-left: 12px;
+      border-left: 5px solid var(--blue);
+      font-size: 22px;
+      line-height: 1.35;
+    }
+
+    h3 {
+      margin: 18px 0 10px;
+      font-size: 17px;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    .lead {
+      font-size: 17px;
+      color: #263348;
+    }
+
+    .grid-3,
+    .grid-2 {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      min-height: 100%;
+      padding: 16px 18px;
+      border: 1px solid #e1e7f0;
+      border-radius: 10px;
+      background: #ffffff;
+    }
+
+    .card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 16px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 2px 6px 2px 0;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .tag.blue {
+      background: var(--blue-soft);
+      color: #1d4ed8;
+    }
+
+    .tag.green {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .tag.amber {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .tag.red {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .status {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .summary {
+      padding: 18px;
+      border-radius: 10px;
+      background: var(--blue-soft);
+      border: 1px solid #cfe0ff;
+    }
+
+    .summary b {
+      color: #174ea6;
+    }
+
+    .list {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .list li {
+      margin: 6px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e7ebf2;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f2f6fc;
+      font-weight: 650;
+      color: #263348;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .chart-box {
+      min-height: 360px;
+      margin-top: 12px;
+      border: 1px solid #e1e7f0;
+      border-radius: 10px;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    #accuracyChart {
+      width: 100%;
+      height: 360px;
+    }
+
+    #timelineChart {
+      width: 100%;
+      min-height: 500px;
+      padding: 8px 8px 0;
+    }
+
+    #milestoneChart {
+      width: 100%;
+      height: 360px;
+    }
+
+    #workloadChart {
+      width: 100%;
+      height: 380px;
+    }
+
+    .visual-pair {
+      margin-top: 18px;
+      align-items: stretch;
+    }
+
+    .visual-single {
+      margin-top: 18px;
+    }
+
+    .visual-title {
+      margin: 0 0 8px;
+      color: #263348;
+      font-size: 16px;
+      font-weight: 650;
+    }
+
+    .plan-note {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border: 1px solid #cfe0ff;
+      border-radius: 8px;
+      background: var(--blue-soft);
+      color: #174ea6;
+      font-size: 14px;
+    }
+
+    .fallback {
+      padding: 14px 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .flow-progress {
+      display: grid;
+      gap: 18px;
+      margin-top: 12px;
+    }
+
+    .flow-track {
+      padding: 14px 14px 16px;
+      border: 1px solid #e1e7f0;
+      border-radius: 10px;
+      background: #fbfcff;
+    }
+
+    .flow-track strong {
+      display: block;
+      margin-bottom: 12px;
+      color: #263348;
+    }
+
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(var(--step-count), minmax(0, 1fr));
+      gap: 8px;
+      position: relative;
+    }
+
+    .flow-steps::before {
+      content: "";
+      position: absolute;
+      left: 7%;
+      right: 7%;
+      top: 13px;
+      height: 2px;
+      background: #d8dee9;
+    }
+
+    .flow-step {
+      position: relative;
+      min-width: 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .flow-dot {
+      display: block;
+      width: 28px;
+      height: 28px;
+      margin: 0 auto 8px;
+      border-radius: 50%;
+      border: 2px solid #c7d0df;
+      background: #ffffff;
+      position: relative;
+      z-index: 1;
+    }
+
+    .flow-step.done {
+      color: #174ea6;
+      font-weight: 650;
+    }
+
+    .flow-step.done .flow-dot {
+      border-color: var(--blue);
+      background: var(--blue);
+    }
+
+    .flow-step.current {
+      color: #5c3a07;
+      font-weight: 650;
+    }
+
+    .flow-step.current .flow-dot {
+      border-color: var(--amber);
+      background: var(--amber-soft);
+      box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.12);
+    }
+
+    .note {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-left: 4px solid var(--amber);
+      background: var(--amber-soft);
+      color: #5c3a07;
+      border-radius: 8px;
+    }
+
+    .risk {
+      border-color: #ffd0c7;
+      background: #fff9f7;
+    }
+
+    .risk strong {
+      color: var(--red);
+    }
+
+    footer {
+      padding: 18px 42px 28px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      background: #fbfcff;
+    }
+
+    .mermaid-wrap {
+      padding: 14px;
+      border: 1px solid #e1e7f0;
+      border-radius: 10px;
+      background: #ffffff;
+      overflow-x: auto;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 860px) {
+      .meta,
+      .grid-3,
+      .grid-2,
+      .status {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        width: calc(100% - 18px);
+        margin: 12px auto 28px;
+      }
+
+      header,
+      main,
+      footer,
+      .meta {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .flow-steps {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-steps::before {
+        left: 13px;
+        right: auto;
+        top: 18px;
+        bottom: 18px;
+        width: 2px;
+        height: auto;
+      }
+
+      .flow-step {
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        gap: 10px;
+        text-align: left;
+        align-items: center;
+      }
+
+      .flow-dot {
+        margin: 0;
+      }
+
+      table {
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <article class="page">
+    <header>
+      <p class="kicker">Weekly Research Report</p>
+      <h1>{{student_name}}工作报告</h1>
+      <p class="subtitle">{{weekly_summary}}</p>
+    </header>
+
+    <div class="meta">
+      <div><span>学生</span><strong>{{student_name}}</strong></div>
+      <div><span>导师</span><strong>{{advisor_name}}</strong></div>
+      <div><span>课题</span><strong>{{research_topic}}</strong></div>
+      <div><span>日期</span><strong>{{report_date_range}}</strong></div>
+    </div>
+
+    <main>
+      <section>
+        <h2>一、工作概览</h2>
+        <div class="status">
+          <div class="summary">
+            <p class="lead"><b>{{overview_lead}}</b></p>
+            <p>{{overview_detail_1}}</p>
+            <p>{{overview_detail_2}}</p>
+          </div>
+          <div class="card">
+            <strong>当前阶段判断</strong>
+            <p><span class="tag green">{{paper_status}}</span> {{paper_status_detail}}</p>
+            <p><span class="tag amber">{{thesis_stage}}</span> {{thesis_stage_detail}}</p>
+            <p><span class="tag red">主要风险</span> {{main_risk}}</p>
+          </div>
+        </div>
+
+        <div class="flow-progress">
+          <div class="flow-track">
+            <strong>{{paper_flow_title}}</strong>
+            <div class="flow-steps" style="--step-count: 5">
+              <div class="flow-step done"><span class="flow-dot"></span><span>{{paper_step_1}}</span></div>
+              <div class="flow-step current"><span class="flow-dot"></span><span>{{paper_step_2}}</span></div>
+              <div class="flow-step"><span class="flow-dot"></span><span>{{paper_step_3}}</span></div>
+              <div class="flow-step"><span class="flow-dot"></span><span>{{paper_step_4}}</span></div>
+              <div class="flow-step"><span class="flow-dot"></span><span>{{paper_step_5}}</span></div>
+            </div>
+          </div>
+          <div class="flow-track">
+            <strong>{{thesis_flow_title}}</strong>
+            <div class="flow-steps" style="--step-count: 6">
+              <div class="flow-step current"><span class="flow-dot"></span><span>{{thesis_step_1}}</span></div>
+              <div class="flow-step"><span class="flow-dot"></span><span>{{thesis_step_2}}</span></div>
+              <div class="flow-step"><span class="flow-dot"></span><span>{{thesis_step_3}}</span></div>
+              <div class="flow-step"><span class="flow-dot"></span><span>{{thesis_step_4}}</span></div>
+              <div class="flow-step"><span class="flow-dot"></span><span>{{thesis_step_5}}</span></div>
+              <div class="flow-step"><span class="flow-dot"></span><span>{{thesis_step_6}}</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="small">说明：这里只表示当前进度，不把未完成的审稿、实验和写作写成已经完成。</p>
+
+        <div class="grid-2 visual-pair">
+          <div class="card">
+            <strong>{{priority_1_title}}</strong>
+            <ul class="list">
+              <li>{{priority_1_item_1}}</li>
+              <li>{{priority_1_item_2}}</li>
+              <li>{{priority_1_item_3}}</li>
+            </ul>
+          </div>
+          <div class="card risk">
+            <strong>{{priority_2_title}}</strong>
+            <ul class="list">
+              <li>{{priority_2_item_1}}</li>
+              <li>{{priority_2_item_2}}</li>
+              <li>{{priority_2_item_3}}</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>二、本周小论文工作</h2>
+        <div class="grid-3">
+          <div class="card">
+            <strong>{{paper_card_1_title}}</strong>
+            <p>{{paper_card_1_body}}</p>
+            <p class="small">{{paper_card_1_note}}</p>
+          </div>
+          <div class="card">
+            <strong>{{paper_card_2_title}}</strong>
+            <p>{{paper_card_2_body}}</p>
+            <p class="small">{{paper_card_2_note}}</p>
+          </div>
+          <div class="card">
+            <strong>{{paper_card_3_title}}</strong>
+            <p>{{paper_card_3_body}}</p>
+          </div>
+        </div>
+
+        <p>{{paper_method_summary}}</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>{{result_col_1}}</th>
+              <th>{{result_col_2}}</th>
+              <th>{{result_col_3}}</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>{{result_1_name}}</td><td>{{result_1_value}}</td><td>{{result_1_delta}}</td><td>{{result_1_note}}</td></tr>
+            <tr><td>{{result_2_name}}</td><td>{{result_2_value}}</td><td>{{result_2_delta}}</td><td>{{result_2_note}}</td></tr>
+            <tr><td>{{result_3_name}}</td><td>{{result_3_value}}</td><td>{{result_3_delta}}</td><td>{{result_3_note}}</td></tr>
+            <tr><td>{{result_4_name}}</td><td>{{result_4_value}}</td><td>{{result_4_delta}}</td><td>{{result_4_note}}</td></tr>
+          </tbody>
+        </table>
+
+        <div class="chart-box">
+          <div id="accuracyChart"></div>
+          <div id="accuracyFallback" class="fallback">{{result_chart_summary}}</div>
+        </div>
+      </section>
+
+      <section>
+        <h2>三、与大论文开题目标的关系</h2>
+        <p>{{thesis_relationship_summary}}</p>
+
+        <div class="mermaid-wrap">
+          <pre class="mermaid">
+flowchart LR
+    A[大论文总体目标] --> B[小论文已有工作]
+    A --> C[新增工作一]
+    A --> D[新增工作二]
+    B --> E[融入大论文基础章节]
+    C --> F[实验、对照与分析]
+    D --> G[场景验证与案例]
+    E --> H[形成完整大论文]
+    F --> H
+    G --> H
+          </pre>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>开题任务</th>
+              <th>当前状态</th>
+              <th>后续处理</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{opening_task_1}}</td>
+              <td>{{opening_status_1}}</td>
+              <td>{{opening_next_1}}</td>
+            </tr>
+            <tr>
+              <td>{{opening_task_2}}</td>
+              <td>{{opening_status_2}}</td>
+              <td>{{opening_next_2}}</td>
+            </tr>
+            <tr>
+              <td>{{opening_task_3}}</td>
+              <td>{{opening_status_3}}</td>
+              <td>{{opening_next_3}}</td>
+            </tr>
+            <tr>
+              <td>{{opening_task_4}}</td>
+              <td>{{opening_status_4}}</td>
+              <td>{{opening_next_4}}</td>
+            </tr>
+            <tr>
+              <td>{{opening_task_5}}</td>
+              <td>{{opening_status_5}}</td>
+              <td>{{opening_next_5}}</td>
+            </tr>
+            <tr>
+              <td>{{opening_task_6}}</td>
+              <td>{{opening_status_6}}</td>
+              <td>{{opening_next_6}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>四、大论文后续内容</h2>
+        <div class="grid-3">
+          <div class="card">
+            <strong>{{thesis_module_1_title}}</strong>
+            <p>{{thesis_module_1_body}}</p>
+          </div>
+          <div class="card">
+            <strong>{{thesis_module_2_title}}</strong>
+            <p>{{thesis_module_2_body}}</p>
+          </div>
+          <div class="card">
+            <strong>{{thesis_module_3_title}}</strong>
+            <p>{{thesis_module_3_body}}</p>
+          </div>
+        </div>
+        <div class="note">
+          {{thesis_structure_note}}
+        </div>
+      </section>
+
+      <section>
+        <h2>五、后续工作安排</h2>
+        <p>{{schedule_summary}}</p>
+
+        <div id="timelineChart" class="chart-box"></div>
+        <div id="timelineFallback" class="fallback">
+          {{timeline_fallback}}
+        </div>
+
+        <div class="visual-single">
+          <p class="visual-title">关键节点</p>
+          <div class="chart-box"><div id="milestoneChart"></div></div>
+        </div>
+
+        <div class="visual-single">
+          <p class="visual-title">工作量趋势</p>
+          <div class="chart-box"><div id="workloadChart"></div></div>
+        </div>
+
+        <div class="plan-note">
+          {{workload_note}}
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>工作项</th>
+              <th>目标</th>
+              <th>可验收产物</th>
+              <th>风险</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{plan_1_task}}</td><td>{{plan_1_goal}}</td><td>{{plan_1_output}}</td><td>{{plan_1_risk}}</td>
+            </tr>
+            <tr>
+              <td>{{plan_2_task}}</td><td>{{plan_2_goal}}</td><td>{{plan_2_output}}</td><td>{{plan_2_risk}}</td>
+            </tr>
+            <tr>
+              <td>{{plan_3_task}}</td><td>{{plan_3_goal}}</td><td>{{plan_3_output}}</td><td>{{plan_3_risk}}</td>
+            </tr>
+            <tr>
+              <td>{{plan_4_task}}</td><td>{{plan_4_goal}}</td><td>{{plan_4_output}}</td><td>{{plan_4_risk}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+    </main>
+
+    <footer>
+      {{footer_note}}
+    </footer>
+  </article>
+
+  <script>
+    const improvementData = [
+      { name: "数据集A", ours: 86.20, base: 84.70, gain: 1.50 },
+      { name: "数据集B", ours: 78.40, base: 76.10, gain: 2.30 },
+      { name: "数据集C", ours: 91.30, base: 88.20, gain: 3.10 },
+      { name: "数据集D", ours: 83.50, base: 81.60, gain: 1.90 }
+    ];
+
+    const planTasks = [
+      {
+        lane: "小论文",
+        task: "审稿/可能返修",
+        start: new Date("2026-07-08"),
+        end: new Date("2026-10-08"),
+        color: "#2563eb",
+        dashed: true,
+        note: "预留到10月"
+      },
+      {
+        lane: "实验一",
+        task: "分阶段训练",
+        start: new Date("2026-07-12"),
+        end: new Date("2026-08-15"),
+        color: "#0f766e",
+        dashed: false,
+        note: "中等工作量"
+      },
+      {
+        lane: "实验二",
+        task: "场景验证",
+        start: new Date("2026-07-20"),
+        end: new Date("2026-09-10"),
+        color: "#b45309",
+        dashed: false,
+        note: "较重"
+      },
+      {
+        lane: "大论文",
+        task: "主体写作",
+        start: new Date("2026-09-01"),
+        end: new Date("2026-10-15"),
+        color: "#7c3aed",
+        dashed: false,
+        note: "中上旬完成"
+      },
+      {
+        lane: "大论文",
+        task: "全稿完成",
+        start: new Date("2026-10-16"),
+        end: new Date("2026-11-03"),
+        color: "#b42318",
+        dashed: false,
+        note: "11月初"
+      }
+    ];
+
+    const planMilestones = [
+      { date: new Date("2026-07-08"), label: "已投稿", lane: "小论文" },
+      { date: new Date("2026-08-15"), label: "初审观察", lane: "小论文" },
+      { date: new Date("2026-10-08"), label: "返修/终审窗口", lane: "小论文" },
+      { date: new Date("2026-08-15"), label: "模块2主实验", lane: "大论文" },
+      { date: new Date("2026-09-10"), label: "模块3实验收口", lane: "大论文" },
+      { date: new Date("2026-10-15"), label: "主体写作完成", lane: "大论文" },
+      { date: new Date("2026-11-03"), label: "全稿完成", lane: "大论文" }
+    ];
+
+    const workloadData = [
+      { name: "审稿跟进", value: 35, detail: "穿插处理，不占主线" },
+      { name: "模块2实验", value: 65, detail: "分阶段训练与低标注率对照" },
+      { name: "模块3实验", value: 90, detail: "数据构建与场景验证" },
+      { name: "融合写作", value: 75, detail: "小论文成果并入大论文" },
+      { name: "全稿修改", value: 70, detail: "格式、逻辑和答辩前修改" }
+    ];
+
+    function initMermaid() {
+      if (!window.mermaid) return;
+      window.mermaid.initialize({
+        startOnLoad: true,
+        theme: "base",
+        themeVariables: {
+          primaryColor: "#eaf1ff",
+          primaryTextColor: "#172033",
+          primaryBorderColor: "#2563eb",
+          lineColor: "#667085",
+          secondaryColor: "#e7f5f1",
+          tertiaryColor: "#fff4df"
+        }
+      });
+    }
+
+    function initECharts() {
+      const el = document.getElementById("accuracyChart");
+      const fallback = document.getElementById("accuracyFallback");
+      if (!el || !window.echarts) return;
+      fallback.style.display = "none";
+      const chart = window.echarts.init(el);
+      chart.setOption({
+        tooltip: { trigger: "axis" },
+        legend: { top: 8, data: ["本文方法", "最强 raw-feature 基线", "提升"] },
+        grid: { left: 56, right: 32, top: 58, bottom: 48 },
+        xAxis: { type: "category", data: improvementData.map(d => d.name), axisTick: { alignWithLabel: true } },
+        yAxis: [
+          { type: "value", min: 65, max: 96, name: "Accuracy(%)" },
+          { type: "value", min: 0, max: 5, name: "提升点" }
+        ],
+        series: [
+          {
+            name: "本文方法",
+            type: "bar",
+            data: improvementData.map(d => d.ours),
+            itemStyle: { color: "#2563eb" },
+            label: { show: true, position: "top", formatter: "{c}" }
+          },
+          {
+            name: "最强 raw-feature 基线",
+            type: "bar",
+            data: improvementData.map(d => d.base),
+            itemStyle: { color: "#94a3b8" }
+          },
+          {
+            name: "提升",
+            type: "line",
+            yAxisIndex: 1,
+            data: improvementData.map(d => d.gain),
+            smooth: true,
+            symbolSize: 8,
+            itemStyle: { color: "#0f766e" },
+            label: { show: true, position: "top", formatter: "+{c}" }
+          }
+        ]
+      });
+      window.addEventListener("resize", () => chart.resize());
+
+      const workloadEl = document.getElementById("workloadChart");
+      if (!workloadEl) return;
+      const workload = window.echarts.init(workloadEl);
+      workload.setOption({
+        tooltip: {
+          trigger: "item",
+          formatter: params => {
+            return workloadData
+              .map(item => `${item.name}：${item.value}/100<br>${item.detail}`)
+              .join("<br><br>");
+          }
+        },
+        radar: {
+          center: ["50%", "53%"],
+          radius: "64%",
+          indicator: workloadData.map(item => ({ name: item.name, max: 100 })),
+          axisName: {
+            color: "#263348",
+            fontSize: 12
+          },
+          splitLine: { lineStyle: { color: "#d8dee9" } },
+          splitArea: {
+            areaStyle: {
+              color: ["rgba(37, 99, 235, 0.04)", "rgba(15, 118, 110, 0.04)"]
+            }
+          },
+          axisLine: { lineStyle: { color: "#d8dee9" } }
+        },
+        series: [{
+          name: "相对工作量",
+          type: "radar",
+          data: [{
+            value: workloadData.map(item => item.value),
+            name: "相对工作量",
+            areaStyle: { color: "rgba(37, 99, 235, 0.18)" },
+            lineStyle: { color: "#2563eb", width: 2 },
+            itemStyle: { color: "#2563eb" },
+            label: {
+              show: true,
+              color: "#263348",
+              formatter: params => params.value
+            }
+          }]
+        }]
+      });
+      window.addEventListener("resize", () => workload.resize());
+    }
+
+    function initTimeline() {
+      const el = document.getElementById("timelineChart");
+      const fallback = document.getElementById("timelineFallback");
+      if (!el || !window.d3) return;
+      fallback.style.display = "none";
+
+      const width = Math.max(el.clientWidth || 900, 320);
+      const rowH = width < 640 ? 58 : 62;
+      const margin = { top: 76, right: 40, bottom: 112, left: width < 640 ? 94 : 170 };
+      const height = margin.top + margin.bottom + planTasks.length * rowH;
+      const svg = d3.select(el).append("svg")
+        .attr("viewBox", [0, 0, width, height])
+        .attr("role", "img")
+        .attr("aria-label", "小论文审稿、两个实验和大论文写作的三泳道时间轴");
+
+      const x = d3.scaleTime()
+        .domain([new Date("2026-07-05"), new Date("2026-11-05")])
+        .range([margin.left, width - margin.right]);
+
+      const y = d3.scaleBand()
+        .domain(planTasks.map(d => d.lane + d.task))
+        .range([margin.top, height - margin.bottom])
+        .padding(0.28);
+
+      const axisY = height - margin.bottom;
+      const topAxisY = margin.top - 34;
+      const tickDates = [
+        new Date("2026-07-08"),
+        new Date("2026-08-01"),
+        new Date("2026-09-01"),
+        new Date("2026-10-01"),
+        new Date("2026-11-01")
+      ];
+      const fmt = d3.timeFormat("%m/%d");
+
+      svg.append("line")
+        .attr("x1", margin.left)
+        .attr("x2", width - margin.right)
+        .attr("y1", topAxisY)
+        .attr("y2", topAxisY)
+        .attr("stroke", "#c7d0df")
+        .attr("stroke-width", 1);
+
+      svg.append("g")
+        .attr("transform", `translate(0,${axisY})`)
+        .call(d3.axisBottom(x).tickValues(tickDates).tickFormat(""))
+        .call(g => g.selectAll("path,line").attr("stroke", "#c7d0df"))
+        .call(g => g.selectAll("text").remove());
+
+      svg.append("g")
+        .selectAll("text")
+        .data(planTasks)
+        .join("text")
+        .attr("x", margin.left - 12)
+        .attr("y", d => y(d.lane + d.task) + y.bandwidth() / 2)
+        .attr("text-anchor", "end")
+        .attr("dominant-baseline", "middle")
+        .attr("fill", "#172033")
+        .attr("font-size", width < 640 ? 11 : 13)
+        .text(d => width < 640 ? d.lane : `${d.lane} / ${d.task}`);
+
+      const markerData = planTasks.flatMap(d => [
+        { date: d.start, key: d.lane + d.task, type: "start" },
+        { date: d.end, key: d.lane + d.task, type: "end" }
+      ]);
+
+      const upperRowKeys = new Set([
+        "实验一分阶段训练",
+        "大论文全稿完成"
+      ]);
+      const lowerRowKeys = new Set([
+        "小论文审稿/可能返修",
+        "实验二场景验证"
+      ]);
+      const labelNudge = {
+        "小论文审稿/可能返修-start": -10,
+        "小论文审稿/可能返修-end": 0,
+        "实验一分阶段训练-start": -8,
+        "实验一分阶段训练-end": 0,
+        "实验二场景验证-start": 8,
+        "实验二场景验证-end": 0,
+        "大论文主体写作-start": -10,
+        "大论文主体写作-end": -10,
+        "大论文全稿完成-start": 10,
+        "大论文全稿完成-end": 0
+      };
+      const endpointLabelData = markerData.map(d => {
+        const row = upperRowKeys.has(d.key) ? "upper" : lowerRowKeys.has(d.key) ? "lower" : null;
+        return {
+          ...d,
+          row,
+          label: fmt(d.date),
+          labelX: x(d.date) + (labelNudge[`${d.key}-${d.type}`] || 0),
+          labelY: row === "upper" ? topAxisY - 10 : axisY + 38
+        };
+      }).filter(d => d.row);
+
+      svg.append("g")
+        .selectAll("line")
+        .data(endpointLabelData)
+        .join("line")
+        .attr("x1", d => x(d.date))
+        .attr("x2", d => x(d.date))
+        .attr("y1", d => d.row === "upper" ? topAxisY : y(d.key))
+        .attr("y2", d => d.row === "upper" ? y(d.key) : axisY)
+        .attr("stroke", "#94a3b8")
+        .attr("stroke-width", 1)
+        .attr("stroke-dasharray", "4 4")
+        .attr("opacity", 0.65);
+
+      svg.append("g")
+        .selectAll("rect")
+        .data(planTasks)
+        .join("rect")
+        .attr("x", d => x(d.start))
+        .attr("y", d => y(d.lane + d.task))
+        .attr("width", d => Math.max(6, x(d.end) - x(d.start)))
+        .attr("height", y.bandwidth())
+        .attr("rx", 7)
+        .attr("fill", d => d.color)
+        .attr("opacity", d => d.dashed ? 0.62 : 0.88)
+        .attr("stroke", d => d.dashed ? d.color : "none")
+        .attr("stroke-dasharray", d => d.dashed ? "6 4" : null);
+
+      svg.append("g")
+        .selectAll("text")
+        .data(planTasks)
+        .join("text")
+        .attr("x", d => x(d.start) + Math.max(8, Math.min(16, (x(d.end) - x(d.start)) / 4)))
+        .attr("y", d => y(d.lane + d.task) + y.bandwidth() / 2)
+        .attr("dominant-baseline", "middle")
+        .attr("fill", "#ffffff")
+        .attr("font-size", width < 640 ? 10 : 12)
+        .attr("font-weight", 600)
+        .text(d => width < 640 ? d.task.slice(0, 6) : d.task);
+
+      svg.append("g")
+        .selectAll("text")
+        .data(planTasks)
+        .join("text")
+        .attr("x", d => x(d.end) + 6)
+        .attr("y", d => y(d.lane + d.task) + y.bandwidth() / 2)
+        .attr("dominant-baseline", "middle")
+        .attr("fill", "#667085")
+        .attr("font-size", width < 640 ? 10 : 12)
+        .text(d => width < 640 ? "" : d.note);
+
+      svg.append("g")
+        .selectAll("circle")
+        .data(endpointLabelData)
+        .join("circle")
+        .attr("cx", d => x(d.date))
+        .attr("cy", d => d.row === "upper" ? topAxisY : axisY)
+        .attr("r", 3)
+        .attr("fill", "#ffffff")
+        .attr("stroke", "#64748b")
+        .attr("stroke-width", 1.5);
+
+      svg.append("g")
+        .selectAll("line.endpoint-leader")
+        .data(endpointLabelData)
+        .join("line")
+        .attr("x1", d => x(d.date))
+        .attr("x2", d => d.labelX)
+        .attr("y1", d => d.row === "upper" ? topAxisY - 5 : axisY + 6)
+        .attr("y2", d => d.row === "upper" ? d.labelY + 4 : d.labelY - 12)
+        .attr("stroke", "#c7d0df")
+        .attr("stroke-width", 1)
+        .attr("stroke-dasharray", "3 3");
+
+      svg.append("g")
+        .selectAll("text.endpoint-date")
+        .data(endpointLabelData)
+        .join("text")
+        .attr("x", d => d.labelX)
+        .attr("y", d => d.labelY)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#263348")
+        .attr("font-size", width < 640 ? 9 : 11)
+        .attr("font-weight", 600)
+        .text(d => d.label);
+    }
+
+    function initMilestones() {
+      const el = document.getElementById("milestoneChart");
+      if (!el || !window.d3) return;
+      const width = Math.max(el.clientWidth || 900, 320);
+      const height = 360;
+      const compact = width < 640;
+      const margin = { top: 44, right: compact ? 22 : 42, bottom: 46, left: compact ? 72 : 100 };
+      const svg = d3.select(el).append("svg")
+        .attr("viewBox", [0, 0, width, height])
+        .attr("role", "img")
+        .attr("aria-label", "小论文和大论文两条线的后续工作里程碑");
+
+      const x = d3.scaleTime()
+        .domain([new Date("2026-07-05"), new Date("2026-11-05")])
+        .range([margin.left, width - margin.right]);
+      const lanes = [
+        { name: "小论文", y: compact ? 106 : 112, color: "#2563eb" },
+        { name: "大论文", y: compact ? 238 : 232, color: "#0f766e" }
+      ];
+      const fmt = d3.timeFormat("%m/%d");
+
+      const axisDates = [
+        { date: new Date("2026-07-08"), yOffset: 0 },
+        { date: new Date("2026-08-15"), yOffset: 0 },
+        { date: new Date("2026-09-10"), yOffset: 0 },
+        { date: new Date("2026-10-08"), yOffset: -10 },
+        { date: new Date("2026-10-15"), yOffset: 10 },
+        { date: new Date("2026-11-03"), yOffset: 0 }
+      ];
+
+      svg.append("g")
+        .selectAll("line.grid")
+        .data(axisDates)
+        .join("line")
+        .attr("x1", d => x(d.date))
+        .attr("x2", d => x(d.date))
+        .attr("y1", margin.top + 6)
+        .attr("y2", height - margin.bottom)
+        .attr("stroke", "#edf1f7")
+        .attr("stroke-width", 1);
+
+      svg.append("g")
+        .selectAll("text.axis-date")
+        .data(axisDates)
+        .join("text")
+        .attr("x", d => x(d.date))
+        .attr("y", d => height - 18 + d.yOffset)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#667085")
+        .attr("font-size", compact ? 9 : 11)
+        .text(d => fmt(d.date));
+
+      lanes.forEach(lane => {
+        svg.append("text")
+          .attr("x", margin.left - 16)
+          .attr("y", lane.y)
+          .attr("text-anchor", "end")
+          .attr("dominant-baseline", "middle")
+          .attr("fill", "#263348")
+          .attr("font-size", compact ? 11 : 13)
+          .attr("font-weight", 700)
+          .text(lane.name);
+
+        svg.append("line")
+          .attr("x1", margin.left)
+          .attr("x2", width - margin.right)
+          .attr("y1", lane.y)
+          .attr("y2", lane.y)
+          .attr("stroke", "#c7d0df")
+          .attr("stroke-width", 2);
+      });
+
+      const laneMap = new Map(lanes.map(lane => [lane.name, lane]));
+
+      svg.append("g")
+        .selectAll("circle")
+        .data(planMilestones)
+        .join("circle")
+        .attr("cx", d => x(d.date))
+        .attr("cy", d => laneMap.get(d.lane).y)
+        .attr("r", 6)
+        .attr("fill", d => laneMap.get(d.lane).color)
+        .attr("stroke", "#ffffff")
+        .attr("stroke-width", 2);
+
+      svg.append("g")
+        .selectAll("text.label")
+        .data(planMilestones)
+        .join("text")
+        .attr("x", d => x(d.date))
+        .attr("y", d => {
+          const laneY = laneMap.get(d.lane).y;
+          if (d.lane === "小论文") return laneY - 22;
+          if (d.label === "主体写作完成" || d.label === "全稿完成") return laneY + 38;
+          return laneY - 22;
+        })
+        .attr("text-anchor", "middle")
+        .attr("fill", "#172033")
+        .attr("font-size", compact ? 10 : 12)
+        .attr("font-weight", 600)
+        .text(d => compact ? d.label.replace("模块", "M").replace("主体写作", "主体") : d.label);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initMermaid();
+      initECharts();
+      initTimeline();
+      initMilestones();
+    });
+  </script>
+</body>
+</html>

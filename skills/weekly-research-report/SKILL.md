@@ -11,7 +11,7 @@ Create a human-readable HTML weekly report for computer-science graduate researc
 
 1. **Collect inputs first.** If the user has not already provided enough information, ask the questions in `references/question-template.md`. Do not generate the HTML from vague inputs.
 2. **Confirm understanding.** Before writing the report, summarize the intended report in 5-8 lines: completed work, paper status, thesis plan, next-week priorities, and content that must not be overstated.
-3. **Generate the report.** Use `references/html-template.md` for section order, visualization choices, file naming, and writing rules.
+3. **Generate the report.** Copy `assets/advisor-report-template.html` as the starting file for advisor mode, then replace its placeholders, sample text, chart data, dates, and flow states with the user's facts. Use `references/html-template.md` for section order, visualization choices, file naming, and writing rules. Preserve the template's visual structure unless the user requests a redesign.
 4. **Validate.** After creating or editing HTML, run a parser check and inline JavaScript syntax check when possible. Search for old dates, old file names, and leftover placeholder text.
 5. **Iterate from feedback.** If the user says the report is confusing, ugly, too official, or inaccurate, use `references/quality-and-defects.md` to identify the failure mode before rewriting.
 
@@ -33,4 +33,5 @@ Create a human-readable HTML weekly report for computer-science graduate researc
 - Read `references/question-template.md` when the user needs the first-round question set.
 - Read `references/html-template.md` before generating or restructuring the HTML report.
 - Read `references/quality-and-defects.md` when evaluating the skill, handling user complaints, or improving the skill itself.
-- Read `assets/html-template-notes.md` for the template asset boundary and planned extensions.
+- Use `assets/advisor-report-template.html` as the default advisor-facing HTML template.
+- Read `assets/html-template-notes.md` before adapting the template.
