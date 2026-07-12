@@ -4,17 +4,48 @@
 
 ## 在线预览
 
-- [查看研究生周报 HTML 模板](https://guzzzz1.github.io/my_skill_wow/weekly-research-report-template.html)
+### 研究生周报
 
-该页面展示 `weekly-research-report` 使用的通用版式。页面中的 `{{...}}` 是待替换字段，生成实际周报时会根据用户信息替换。
+`weekly-research-report` 的通用 HTML 模板。页面中的 `{{...}}` 是待替换字段，生成实际周报时会根据用户信息替换。
+
+[查看 HTML 模板](https://guzzzz1.github.io/my_skill_wow/weekly-research-report-template.html)
 
 ## Skill 目录
 
-| 中文名 | Skill | 用途 | 源码 | 安装 |
-|---|---|---|---|---|
-| 研究生周报 | `weekly-research-report` | 生成计算机研究生 HTML 周报 | [源码](./skills/weekly-research-report/) / [预览](https://guzzzz1.github.io/my_skill_wow/weekly-research-report-template.html) | [跳到安装](#weekly-research-report) |
-| Skill 评估 | `evaluate-skill-quality` | 按 D1-D9 评估 Skill，给出准入结论和优化任务 | [查看](./skills/evaluate-skill-quality/) | [跳到安装](#evaluate-skill-quality) |
-| Skill 仓库维护 | `manage-skill-repository` | 新增或修改 Skill，完成校验、评估、文档更新和发布 | [查看](./skills/manage-skill-repository/) | [跳到安装](#manage-skill-repository) |
+<table>
+  <thead>
+    <tr>
+      <th>中文名</th>
+      <th>Skill</th>
+      <th>用途</th>
+      <th>源码</th>
+      <th>安装</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>研究生周报</td>
+      <td><code>weekly-research-report</code></td>
+      <td>生成研究生 HTML 周报</td>
+      <td><a href="./skills/weekly-research-report/"><code>查看完整源码</code></a></td>
+      <td><a href="#weekly-research-report"><code>查看安装方式</code></a></td>
+    </tr>
+    <tr>
+      <td>Skill 评估</td>
+      <td><code>evaluate-skill-quality</code></td>
+      <td>D1-D9 评估与准入建议</td>
+      <td><a href="./skills/evaluate-skill-quality/"><code>查看完整源码</code></a></td>
+      <td><a href="#evaluate-skill-quality"><code>查看安装方式</code></a></td>
+    </tr>
+    <tr>
+      <td>Skill 仓库维护</td>
+      <td><code>manage-skill-repository</code></td>
+      <td>新增或修改 Skill</td>
+      <td><a href="./skills/manage-skill-repository/"><code>查看完整源码</code></a></td>
+      <td><a href="#manage-skill-repository"><code>查看安装方式</code></a></td>
+    </tr>
+  </tbody>
+</table>
 
 ## 按需安装
 
