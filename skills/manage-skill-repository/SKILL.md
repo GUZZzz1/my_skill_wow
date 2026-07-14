@@ -1,11 +1,11 @@
 ---
 name: manage-skill-repository
-description: Add new Codex Skills to GUZZzz1/my_skill_wow or modify existing Skills, including package structure, metadata, references, scripts, assets, examples, validation, quality evaluation, README catalog and installation instructions, Git commit, push, and remote verification. Use when the user asks to add, create, revise, improve, or update a Skill in this repository.
+description: Add new Agent Skills to GUZZzz1/my_skill_wow or modify existing Skills, including package structure, metadata, references, scripts, assets, examples, validation, quality evaluation, cross-Agent installation instructions, Git commit, push, and remote verification. Use when the user asks to add, create, revise, improve, or update a Skill in this repository.
 ---
 
 # Manage Skill Repository
 
-Maintain `GUZZzz1/my_skill_wow` as a collection of independently installable Codex Skills.
+Maintain `GUZZzz1/my_skill_wow` as a collection of independently installable Agent Skills.
 
 ## Repository Contract
 
@@ -26,7 +26,7 @@ Maintain `GUZZzz1/my_skill_wow` as a collection of independently installable Cod
 5. Apply the component matrix in `references/repository-contract.md`: metadata, interface, references, scripts, assets, examples, dependencies, privacy, documentation, and install paths.
 6. Validate the affected Skill with the system `skill-creator/scripts/quick_validate.py`. Run representative scripts and parse/render assets where applicable. Check all direct references.
 7. Use the repository sibling `skills/evaluate-skill-quality` when present; otherwise use the installed `evaluate-skill-quality`. Require at least `DESIGN_PASS` before entering release testing. Do not call a Skill `TEST_PASS` or `RELEASE_READY` without the evidence required by the evaluator. Resolve P0/P1 items and rerun the affected tests. If neither evaluator is available, stop before public release and report the missing gate.
-8. Update the root catalog, source link, Codex installation prompt, terminal installation command, repository tree, and any lifecycle notice affected by the change.
+8. Update the root catalog, source link, AI coding Agent installation prompt, cross-platform workspace installation command, repository tree, and any lifecycle notice affected by the change.
 9. Run the release checklist in `references/release-checklist.md`, including a clean temporary installation smoke test for new or changed public Skills when feasible.
 10. Review the exact diff, stage only in-scope files, commit intentionally, push, and verify the remote branch points to the new commit.
 11. Report changed Skills, validation, admission recommendation, installation test, commit, remote verification, and unresolved risks.
@@ -37,10 +37,11 @@ For each Skill, add:
 
 - One row in the root catalog linking to `./skills/<skill-name>/` and its installation section.
 - One short plain-language description.
-- One copyable prompt asking Codex to use `$skill-installer` for only that Skill path.
-- One copyable command that invokes the installed system Skill installer with `--repo GUZZzz1/my_skill_wow --path skills/<skill-name>`.
+- One copyable prompt asking the current AI coding Agent to detect its supported user-level Skill directory and download only that Skill path.
+- Cross-platform terminal examples that run the repository installer with `--skill <skill-name> --scope workspace --agent auto`.
+- A note that Codex/general Agent Skills use `.agents/skills`, Claude Code uses `.claude/skills`, and existing destinations must not be overwritten silently.
 
-Never replace per-Skill installation with a command that copies the entire repository into `~/.codex/skills`.
+Never replace per-Skill installation with a command that copies the entire repository into an Agent configuration directory.
 
 ## Update Rules
 

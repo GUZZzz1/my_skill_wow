@@ -24,7 +24,8 @@
 - Skill 由 `skill-creator` 初始化，目录和 `name` 一致。
 - 直接引用文件完整，结构校验通过。
 - `evaluate-skill-quality` 至少输出 `DESIGN_PASS`，没有 P0；只有满足相应工程门和证据等级时才能声称 `TEST_PASS` 或 `RELEASE_READY`。
-- README 有目录、源码链接、Codex 提示词和终端命令。
+- README 有目录、源码链接、AI 编程 Agent 提示词和跨平台工作区安装命令。
+- 安装器能识别 `.agents/skills` 与 `.claude/skills`，且不会覆盖已有 Skill。
 - 临时安装目录中只出现目标 Skill。
 - 推送后远程 commit ID 与本地一致。
 

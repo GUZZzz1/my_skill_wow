@@ -1,6 +1,6 @@
 # my_skill_wow
 
-个人 Codex Skills 集合仓库。每个 Skill 独立安装，不需要下载整个仓库。
+个人 Agent Skills 集合仓库。每个 Skill 都可独立安装，不需要完整克隆或安装整个仓库。
 
 ## 在线预览
 
@@ -49,27 +49,46 @@
 
 ## 按需安装
 
-推荐直接复制“Codex 安装提示词”并发送给 Codex，由 Codex 调用系统自带的 `$skill-installer` 完成安装。也可使用后面的终端命令手动安装。
+推荐把安装提示词发给 Codex、Claude Code 或其他支持 Agent Skills 的 AI 编程 Agent，让它识别自己的标准目录并完成安装。也可以使用后面的跨平台终端方式，把 Skill 安装到当前工作区。
 
-两种方式都只会安装选中的 Skill，不需要克隆整个仓库。
+两种方式都只下载选中的 Skill。终端安装器先尝试直接下载目标目录，GitHub API 不可用时自动降级为 Git sparse checkout；不会检出其他 Skill 的文件。目标目录已经存在时应先比较版本，不要直接覆盖。
+
+目录约定：Codex 与通用 Agent Skills 的用户级目录为 `<用户主目录>/.agents/skills`，项目级目录为 `<工作区>/.agents/skills`；Claude Code 的对应目录为 `<用户主目录>/.claude/skills` 和 `<工作区>/.claude/skills`。项目中的 `.codex` 是 Codex 配置目录，不作为项目级 Skill 目录。
 
 ### weekly-research-report
 
 用于根据小论文、大论文、实验和下周计划生成简洁的 HTML 工作报告。
 
-**方式一：复制到 Codex（推荐）**
+**方式一：交给 AI 编程 Agent 自动安装（推荐）**
 
 ```text
-请使用 $skill-installer 从 GitHub 仓库 GUZZzz1/my_skill_wow 安装 skills/weekly-research-report。只安装这一个 Skill，不要克隆或安装整个仓库。如果网络访问需要授权，请向我申请。安装完成后告诉我安装路径，并说明它会从下一个任务开始可用。
+请从 GitHub 仓库 GUZZzz1/my_skill_wow 只安装 skills/weekly-research-report，不要完整克隆或安装整个仓库。
+
+先识别你当前运行的 AI 编程 Agent 及其实际支持的 Skill 目录，不要臆造路径。自动模式下，直接安装到该 Agent 的用户级标准目录，供我的所有工作区使用：Codex 或通用 Agent Skills 使用用户主目录中的 `.agents/skills`，Claude Code 使用用户主目录中的 `.claude/skills`，其他 Agent 遵循自身官方约定。无法判断当前 Agent 或存在多个有效目录时，先给出建议路径并询问我。
+
+优先使用仓库提供的 `scripts/install-skill.py`，以 `--scope user` 和识别到的 `--agent` 参数安装；也可以使用当前 Agent 的等价原生安装方式，但最终目录必须符合上面的约定。只下载目标 Skill 子目录。目标目录已存在时不要覆盖，先说明现有版本与仓库版本的差异并询问我。安装后检查 SKILL.md 是否存在，告诉我实际安装路径，并说明是否需要新建任务或重新加载 Agent。
 ```
 
-**方式二：终端命令**
+**方式二：安装到当前工作区（终端）**
+
+在工作区内执行。脚本默认查找最近的 Git 仓库根目录；没有 Git 仓库时使用当前目录。`--agent auto` 按 `.agents`、`.codex`、`.claude` 的顺序识别环境；`.codex` 只作为 Codex 环境信号，实际仍安装到官方项目级目录 `.agents/skills`。无法识别时也使用开放约定 `.agents/skills`。
+
+macOS / Linux：
 
 ```bash
-python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo GUZZzz1/my_skill_wow \
-  --path skills/weekly-research-report
+curl -fsSL https://raw.githubusercontent.com/GUZZzz1/my_skill_wow/main/scripts/install-skill.py -o /tmp/install-skill.py
+python3 /tmp/install-skill.py --skill weekly-research-report --scope workspace --agent auto
 ```
+
+Windows PowerShell：
+
+```powershell
+$installer = Join-Path $env:TEMP "install-skill.py"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/GUZZzz1/my_skill_wow/main/scripts/install-skill.py" -OutFile $installer
+py $installer --skill weekly-research-report --scope workspace --agent auto
+```
+
+Windows 未提供 `py` 命令时，将上面的 `py` 改为 `python`。
 
 ### evaluate-skill-quality
 
@@ -77,39 +96,67 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
 
 固定 8 维及交叉评估方法源自 MIT 许可的 [`sunxingboo/skill-evaluator`](https://github.com/sunxingboo/skill-evaluator)；工程准入层是本仓库扩展。该方法不是 OpenAI 官方评分标准。[查看标准来源与边界](./skills/evaluate-skill-quality/references/standard-basis.md)。
 
-**方式一：复制到 Codex（推荐）**
+**方式一：交给 AI 编程 Agent 自动安装（推荐）**
 
 ```text
-请使用 $skill-installer 从 GitHub 仓库 GUZZzz1/my_skill_wow 安装 skills/evaluate-skill-quality。只安装这一个 Skill，不要克隆或安装整个仓库。如果网络访问需要授权，请向我申请。安装完成后告诉我安装路径，并说明它会从下一个任务开始可用。
+请从 GitHub 仓库 GUZZzz1/my_skill_wow 只安装 skills/evaluate-skill-quality，不要完整克隆或安装整个仓库。
+
+先识别你当前运行的 AI 编程 Agent 及其实际支持的 Skill 目录，不要臆造路径。自动模式下，直接安装到该 Agent 的用户级标准目录，供我的所有工作区使用：Codex 或通用 Agent Skills 使用用户主目录中的 `.agents/skills`，Claude Code 使用用户主目录中的 `.claude/skills`，其他 Agent 遵循自身官方约定。无法判断当前 Agent 或存在多个有效目录时，先给出建议路径并询问我。
+
+优先使用仓库提供的 `scripts/install-skill.py`，以 `--scope user` 和识别到的 `--agent` 参数安装；也可以使用当前 Agent 的等价原生安装方式，但最终目录必须符合上面的约定。只下载目标 Skill 子目录。目标目录已存在时不要覆盖，先说明现有版本与仓库版本的差异并询问我。安装后检查 SKILL.md 是否存在，告诉我实际安装路径，并说明是否需要新建任务或重新加载 Agent。
 ```
 
-**方式二：终端命令**
+**方式二：安装到当前工作区（终端）**
+
+macOS / Linux：
 
 ```bash
-python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo GUZZzz1/my_skill_wow \
-  --path skills/evaluate-skill-quality
+curl -fsSL https://raw.githubusercontent.com/GUZZzz1/my_skill_wow/main/scripts/install-skill.py -o /tmp/install-skill.py
+python3 /tmp/install-skill.py --skill evaluate-skill-quality --scope workspace --agent auto
+```
+
+Windows PowerShell：
+
+```powershell
+$installer = Join-Path $env:TEMP "install-skill.py"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/GUZZzz1/my_skill_wow/main/scripts/install-skill.py" -OutFile $installer
+py $installer --skill evaluate-skill-quality --scope workspace --agent auto
 ```
 
 ### manage-skill-repository
 
-仓库维护者使用。安装后，可以让 Codex 新增 Skill 或修改已有 Skill，并完成结构校验、质量评估、README 更新、提交和推送。
+仓库维护者使用。安装后，可以让 AI 编程 Agent 新增或修改 Skill，并完成结构校验、质量评估、README 更新、提交和推送。
 
-**方式一：复制到 Codex（推荐）**
+**方式一：交给 AI 编程 Agent 自动安装（推荐）**
 
 ```text
-请使用 $skill-installer 从 GitHub 仓库 GUZZzz1/my_skill_wow 安装 skills/manage-skill-repository。只安装这一个 Skill，不要克隆或安装整个仓库。如果网络访问需要授权，请向我申请。安装完成后告诉我安装路径，并说明它会从下一个任务开始可用。
+请从 GitHub 仓库 GUZZzz1/my_skill_wow 只安装 skills/manage-skill-repository，不要完整克隆或安装整个仓库。
+
+先识别你当前运行的 AI 编程 Agent 及其实际支持的 Skill 目录，不要臆造路径。自动模式下，直接安装到该 Agent 的用户级标准目录，供我的所有工作区使用：Codex 或通用 Agent Skills 使用用户主目录中的 `.agents/skills`，Claude Code 使用用户主目录中的 `.claude/skills`，其他 Agent 遵循自身官方约定。无法判断当前 Agent 或存在多个有效目录时，先给出建议路径并询问我。
+
+优先使用仓库提供的 `scripts/install-skill.py`，以 `--scope user` 和识别到的 `--agent` 参数安装；也可以使用当前 Agent 的等价原生安装方式，但最终目录必须符合上面的约定。只下载目标 Skill 子目录。目标目录已存在时不要覆盖，先说明现有版本与仓库版本的差异并询问我。安装后检查 SKILL.md 是否存在，告诉我实际安装路径，并说明是否需要新建任务或重新加载 Agent。
 ```
 
-**方式二：终端命令**
+**方式二：安装到当前工作区（终端）**
+
+macOS / Linux：
 
 ```bash
-python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo GUZZzz1/my_skill_wow \
-  --path skills/manage-skill-repository
+curl -fsSL https://raw.githubusercontent.com/GUZZzz1/my_skill_wow/main/scripts/install-skill.py -o /tmp/install-skill.py
+python3 /tmp/install-skill.py --skill manage-skill-repository --scope workspace --agent auto
 ```
 
-安装完成后，在 Codex 的下一个任务中使用对应 Skill。
+Windows PowerShell：
+
+```powershell
+$installer = Join-Path $env:TEMP "install-skill.py"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/GUZZzz1/my_skill_wow/main/scripts/install-skill.py" -OutFile $installer
+py $installer --skill manage-skill-repository --scope workspace --agent auto
+```
+
+如需明确指定目录，可追加 `--dest <Skill 父目录>`；如需安装为当前用户全局可用，可改为 `--scope user --agent codex` 或 `--scope user --agent claude`。网络无法访问 `api.github.com` 时无需改命令，自动模式会尝试 Git sparse checkout；也可显式追加 `--method git`。
+
+安装完成后，新建任务或重新加载 AI 编程 Agent，再使用对应 Skill。
 
 ## 仓库结构
 
@@ -118,6 +165,8 @@ my_skill_wow/
 ├── README.md
 ├── docs/
 │   └── weekly-research-report-template.html
+├── scripts/
+│   └── install-skill.py
 └── skills/
     ├── weekly-research-report/
     │   ├── SKILL.md
