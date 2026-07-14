@@ -38,7 +38,7 @@ For each Skill, add:
 - One row in the root catalog linking to `./skills/<skill-name>/` and its installation section.
 - One short plain-language description.
 - One copyable prompt asking the current AI coding Agent to detect its supported user-level Skill directory and download only that Skill path.
-- Cross-platform terminal examples that run the repository installer with `--skill <skill-name> --scope workspace --agent auto`.
+- Cross-platform terminal examples that sparse-checkout `scripts` plus the target Skill, then run the repository installer with `--source-root`, `--skill <skill-name>`, `--scope workspace`, and `--agent auto`.
 - A note that Codex/general Agent Skills use `.agents/skills`, Claude Code uses `.claude/skills`, and existing destinations must not be overwritten silently.
 
 Never replace per-Skill installation with a command that copies the entire repository into an Agent configuration directory.

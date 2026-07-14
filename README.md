@@ -51,7 +51,7 @@
 
 推荐把安装提示词发给 Codex、Claude Code 或其他支持 Agent Skills 的 AI 编程 Agent，让它识别自己的标准目录并完成安装。也可以使用后面的跨平台终端方式，把 Skill 安装到当前工作区。
 
-两种方式都只下载选中的 Skill。终端安装器先尝试直接下载目标目录，GitHub API 不可用时自动降级为 Git sparse checkout；不会检出其他 Skill 的文件。目标目录已经存在时应先比较版本，不要直接覆盖。
+两种方式都只下载选中的 Skill。AI 自动安装可直接下载目标目录，并在 GitHub API 不可用时降级为 Git sparse checkout；终端方式从一开始就使用 sparse checkout，只检出安装器和所选 Skill。目标目录已经存在时应先比较版本，不要直接覆盖。
 
 目录约定：Codex 与通用 Agent Skills 的用户级目录为 `<用户主目录>/.agents/skills`，项目级目录为 `<工作区>/.agents/skills`；Claude Code 的对应目录为 `<用户主目录>/.claude/skills` 和 `<工作区>/.claude/skills`。项目中的 `.codex` 是 Codex 配置目录，不作为项目级 Skill 目录。
 
@@ -71,21 +71,24 @@
 
 **方式二：安装到当前工作区（终端）**
 
-在工作区内执行。脚本默认查找最近的 Git 仓库根目录；没有 Git 仓库时使用当前目录。`--agent auto` 按 `.agents`、`.codex`、`.claude` 的顺序识别环境；`.codex` 只作为 Codex 环境信号，实际仍安装到官方项目级目录 `.agents/skills`。无法识别时也使用开放约定 `.agents/skills`。
+在工作区内执行，需要 Git 与 Python 3。命令先把安装器和目标 Skill 稀疏检出到系统临时目录，再安装到最近的 Git 工作区根目录；当前目录不在 Git 仓库内时，就安装到当前目录。`--agent auto` 按 `.agents`、`.codex`、`.claude` 的顺序识别环境；`.codex` 只作为 Codex 环境信号，实际仍安装到官方项目级目录 `.agents/skills`。无法识别时也使用开放约定 `.agents/skills`。
 
 macOS / Linux：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/GUZZzz1/my_skill_wow/main/scripts/install-skill.py -o /tmp/install-skill.py
-python3 /tmp/install-skill.py --skill weekly-research-report --scope workspace --agent auto
+installer_dir="$(mktemp -d)"
+git clone --depth 1 --filter=blob:none --sparse https://github.com/GUZZzz1/my_skill_wow.git "$installer_dir/my_skill_wow"
+git -C "$installer_dir/my_skill_wow" sparse-checkout set scripts skills/weekly-research-report
+python3 "$installer_dir/my_skill_wow/scripts/install-skill.py" --skill weekly-research-report --source-root "$installer_dir/my_skill_wow" --scope workspace --agent auto
 ```
 
 Windows PowerShell：
 
 ```powershell
-$installer = Join-Path $env:TEMP "install-skill.py"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/GUZZzz1/my_skill_wow/main/scripts/install-skill.py" -OutFile $installer
-py $installer --skill weekly-research-report --scope workspace --agent auto
+$installerDir = Join-Path $env:TEMP ("my-skill-wow-" + [guid]::NewGuid())
+git clone --depth 1 --filter=blob:none --sparse https://github.com/GUZZzz1/my_skill_wow.git "$installerDir/my_skill_wow"
+git -C "$installerDir/my_skill_wow" sparse-checkout set scripts skills/weekly-research-report
+py "$installerDir/my_skill_wow/scripts/install-skill.py" --skill weekly-research-report --source-root "$installerDir/my_skill_wow" --scope workspace --agent auto
 ```
 
 Windows 未提供 `py` 命令时，将上面的 `py` 改为 `python`。
@@ -111,16 +114,19 @@ Windows 未提供 `py` 命令时，将上面的 `py` 改为 `python`。
 macOS / Linux：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/GUZZzz1/my_skill_wow/main/scripts/install-skill.py -o /tmp/install-skill.py
-python3 /tmp/install-skill.py --skill evaluate-skill-quality --scope workspace --agent auto
+installer_dir="$(mktemp -d)"
+git clone --depth 1 --filter=blob:none --sparse https://github.com/GUZZzz1/my_skill_wow.git "$installer_dir/my_skill_wow"
+git -C "$installer_dir/my_skill_wow" sparse-checkout set scripts skills/evaluate-skill-quality
+python3 "$installer_dir/my_skill_wow/scripts/install-skill.py" --skill evaluate-skill-quality --source-root "$installer_dir/my_skill_wow" --scope workspace --agent auto
 ```
 
 Windows PowerShell：
 
 ```powershell
-$installer = Join-Path $env:TEMP "install-skill.py"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/GUZZzz1/my_skill_wow/main/scripts/install-skill.py" -OutFile $installer
-py $installer --skill evaluate-skill-quality --scope workspace --agent auto
+$installerDir = Join-Path $env:TEMP ("my-skill-wow-" + [guid]::NewGuid())
+git clone --depth 1 --filter=blob:none --sparse https://github.com/GUZZzz1/my_skill_wow.git "$installerDir/my_skill_wow"
+git -C "$installerDir/my_skill_wow" sparse-checkout set scripts skills/evaluate-skill-quality
+py "$installerDir/my_skill_wow/scripts/install-skill.py" --skill evaluate-skill-quality --source-root "$installerDir/my_skill_wow" --scope workspace --agent auto
 ```
 
 ### manage-skill-repository
@@ -142,19 +148,22 @@ py $installer --skill evaluate-skill-quality --scope workspace --agent auto
 macOS / Linux：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/GUZZzz1/my_skill_wow/main/scripts/install-skill.py -o /tmp/install-skill.py
-python3 /tmp/install-skill.py --skill manage-skill-repository --scope workspace --agent auto
+installer_dir="$(mktemp -d)"
+git clone --depth 1 --filter=blob:none --sparse https://github.com/GUZZzz1/my_skill_wow.git "$installer_dir/my_skill_wow"
+git -C "$installer_dir/my_skill_wow" sparse-checkout set scripts skills/manage-skill-repository
+python3 "$installer_dir/my_skill_wow/scripts/install-skill.py" --skill manage-skill-repository --source-root "$installer_dir/my_skill_wow" --scope workspace --agent auto
 ```
 
 Windows PowerShell：
 
 ```powershell
-$installer = Join-Path $env:TEMP "install-skill.py"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/GUZZzz1/my_skill_wow/main/scripts/install-skill.py" -OutFile $installer
-py $installer --skill manage-skill-repository --scope workspace --agent auto
+$installerDir = Join-Path $env:TEMP ("my-skill-wow-" + [guid]::NewGuid())
+git clone --depth 1 --filter=blob:none --sparse https://github.com/GUZZzz1/my_skill_wow.git "$installerDir/my_skill_wow"
+git -C "$installerDir/my_skill_wow" sparse-checkout set scripts skills/manage-skill-repository
+py "$installerDir/my_skill_wow/scripts/install-skill.py" --skill manage-skill-repository --source-root "$installerDir/my_skill_wow" --scope workspace --agent auto
 ```
 
-如需明确指定目录，可追加 `--dest <Skill 父目录>`；如需安装为当前用户全局可用，可改为 `--scope user --agent codex` 或 `--scope user --agent claude`。网络无法访问 `api.github.com` 时无需改命令，自动模式会尝试 Git sparse checkout；也可显式追加 `--method git`。
+如需明确指定目录，可追加 `--dest <Skill 父目录>`；如需安装为当前用户全局可用，可改为 `--scope user --agent codex` 或 `--scope user --agent claude`。临时稀疏仓库可以在安装后删除，不影响已安装的 Skill。
 
 安装完成后，新建任务或重新加载 AI 编程 Agent，再使用对应 Skill。
 

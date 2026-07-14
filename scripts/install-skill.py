@@ -63,6 +63,11 @@ def parse_args() -> argparse.Namespace:
         help="Explicit parent Skill directory; overrides scope and Agent detection.",
     )
     parser.add_argument(
+        "--source-root",
+        type=Path,
+        help="Copy from an existing repository root instead of downloading from GitHub.",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Print the resolved destination without downloading files.",
@@ -248,7 +253,12 @@ def install(args: argparse.Namespace) -> Path:
     temp_root = Path(tempfile.mkdtemp(prefix=".skill-install-", dir=target.parent))
     staged = temp_root / args.skill
     try:
-        if args.method in ("auto", "download"):
+        if args.source_root:
+            source = args.source_root.expanduser().resolve() / "skills" / args.skill
+            if not source.is_dir():
+                raise InstallError(f"Skill not found under --source-root: skills/{args.skill}")
+            shutil.copytree(source, staged)
+        elif args.method in ("auto", "download"):
             try:
                 download_tree(args.repo, args.ref, f"skills/{args.skill}", staged)
             except InstallError as direct_error:

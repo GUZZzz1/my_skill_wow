@@ -28,7 +28,7 @@
 ## 全仓一致性
 
 - 根 README 中每个 Skill 必须存在，每个对外 Skill 也必须出现在目录。
-- 安装提示词中的仓库/Skill 路径，以及命令中的 `--skill`/`--scope`/`--agent` 必须与仓库、目录和安装器参数一致。
+- 安装提示词中的仓库/Skill 路径，以及命令中的 sparse checkout 路径、`--source-root`/`--skill`/`--scope`/`--agent` 必须与仓库、目录和安装器参数一致。
 - Codex/通用 Agent Skills 的项目级目录使用 `.agents/skills`，Claude Code 使用 `.claude/skills`；不得把项目 `.codex` 错写为 Codex Skill 目录。
 - 目录树、Skill 名、显示名、默认提示词和文档不得保留旧名。
 - 直接引用的所有资源必须存在；孤立资源要删除或接入流程。

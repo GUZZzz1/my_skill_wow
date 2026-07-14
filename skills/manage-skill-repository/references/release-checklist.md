@@ -25,7 +25,7 @@
 
 - 更新目录行、源码链接、说明、AI 编程 Agent 安装提示词和 macOS/Linux、Windows 终端命令。
 - 校验用户级与工作区级目录约定；Codex/通用 Agent Skills 使用 `.agents/skills`，Claude Code 使用 `.claude/skills`。
-- 运行安装器的目标路径解析、非法输入、已有目录拒绝、直接下载与 Git sparse checkout 降级，并完成至少一个真实下载 case。
+- 运行安装器的目标路径解析、非法输入、已有目录拒绝、直接下载、Git sparse checkout 降级和 `--source-root` 本地稀疏副本安装，并完成至少一个真实下载 case。
 - 临时目录安装验证：只安装指定 Skill，目录名正确，包内文件完整。
 - 已安装同名 Skill 的升级方式必须明确，不覆盖用户本地修改。
 
