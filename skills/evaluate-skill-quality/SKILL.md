@@ -1,37 +1,120 @@
 ---
 name: evaluate-skill-quality
-description: Evaluate an existing or newly created Codex Skill with an evidence-based D1-D9 framework, admission gates, scorecard, trigger and workflow tests, and prioritized optimization tasks. Use when the user asks to review, audit, score, accept, publish, improve, compare, or determine whether a Skill is ready for personal, team, or public use, including as the final quality gate after creating or revising a Skill.
+description: 评估、审计或横向比较 Agent Skill 的设计质量、业务适配度、工程可用性和上线证据。用于评审 SKILL.md、Skill 目录、Skill 方案或新旧版本，判断其是否仅为高质量 Prompt、是否通过真实测试、能否进入发布；当用户要求 Skill 打分、优化建议、上线准入、生产就绪检查、触发评测或版本对比时使用。不要用于普通文章评分、代码审查或未封装为 Skill 的一次性 Prompt 润色。
 ---
 
-# Evaluate Skill Quality
+# Skill 质量与上线准入评估
 
-Evaluate the actual Skill package, not only its prose. Produce a decision that a user can act on and an optimization plan that an Agent can execute.
+将“设计写得好”和“真实环境可上线”分开评估。必须基于可见文件、测试记录和平台证据下结论，禁止把方案、声称或静态评分写成已经验证。
 
-## Workflow
+## 评估输入
 
-1. Confirm the target Skill directory and intended audience: personal, team, or public.
-2. Read the complete `SKILL.md`, `agents/openai.yaml` when present, and every directly referenced resource needed to evaluate the workflow. Inspect the directory structure, scripts, and assets without loading unrelated content.
-3. Run the available structural validator. Run scripts or representative checks when safe and relevant. Never award validation credit for checks that were not executed.
-4. Apply the hard admission gates in `references/admission-gates.md` before interpreting the numeric score.
-5. Score D1-D9 using `references/scoring-rubric.md`. Cite concrete files, lines, commands, outputs, or test cases for every deduction.
-6. Test or design at least three positive trigger prompts, three negative trigger prompts, two normal workflow cases, and one failure or edge case. Mark simulated cases clearly when they were not executed.
-7. Issue one admission recommendation using `references/admission-gates.md`.
-8. Produce the user-facing decision and Agent-facing optimization backlog using `references/output-template.md`.
-9. If the user asks for optimization, patch only the admitted scope, rerun affected checks, rescore changed dimensions, and report the before/after evidence. Do not claim improvement from edits alone.
+优先读取：
 
-## Evaluation Rules
+1. 被评估 Skill 的 `SKILL.md`、`agents/`、`references/`、`scripts/`、`assets/`。
+2. 业务目标、目标用户、目标平台和不适用范围。
+3. 应触发/不应触发 query、功能测试矩阵、执行日志、产物和人工验收记录。
+4. 新旧版本 diff、badcase、回归记录和发布/灰度证据。
 
-- State that the inherited evaluator has eight dimensions and D9, `Evaluation closure / verifiability`, is an explicit extension. Do not call D1-D9 an official nine-dimension framework.
-- Separate structural validity, quality score, and real-use evidence. Passing a YAML validator does not prove the Skill works.
-- Treat missing evidence as unverified, not passed.
-- Do not average away a critical defect. Hard gates override total score.
-- Do not inflate domain knowledge scores for generic instructions that any capable model already knows.
-- Evaluate repository documentation only when it affects installation, discovery, invocation, or maintenance of the target Skill.
-- Preserve the user's existing design intent unless it creates a concrete defect.
+输入不全时继续做可完成的部分，但必须降低证据等级和最终状态。不要根据文件名猜测未读取的实现，不要把作者声明当测试证据。
 
-## Resources
+首次解释本评估体系的来源、层级或官方性时，读取 [standard-basis.md](references/standard-basis.md)。
 
-- Read `references/scoring-rubric.md` for D1-D9 scoring and evidence requirements.
-- Read `references/admission-gates.md` for hard blockers, score thresholds, and release recommendations.
-- Read `references/output-template.md` before producing the final evaluation or Agent optimization backlog.
-- Read `references/evaluation-cases.md` when testing this evaluator itself or when a target Skill has no existing evaluation set.
+## 执行流程
+
+### 1. 建立事实清单
+
+先列出：
+
+- 已读取的静态资产。
+- 已提供的实际测试证据。
+- 目标平台和业务要求。
+- 缺失但会影响结论的材料。
+
+明确区分 `已检查`、`有测试证据`、`作者声称`、`待确认`。
+
+### 2. 评固定 8 维设计质量
+
+读取 [rubric.md](references/rubric.md) 的 D1-D8 口径。每维按 `0-10` 分评价，可使用 `0.5` 分，必须给出分数、可定位证据、主要缺口和一项最优先修改。
+
+按固定权重计算，不得根据 Skill 类型临时改变权重：
+
+```text
+总分 = D1*0.15 + D2*0.15 + D3*0.15 + D4*0.15
+     + D5*0.10 + D6*0.10 + D7*0.10 + D8*0.10
+```
+
+需要确定性计算时运行 `scripts/calculate_score.py`。固定 8 维用于跨 Skill、跨版本比较。不要把平台兼容、测试通过率或业务效果硬塞成第 9 个加权维度。
+
+D6 若确认 Skill 不需要附带资源，标记为 `N/A`，计算时输入 `7`；不得因“小型 Skill 没有 scripts/assets”直接扣到低分。
+
+### 3. 生成动态业务验收维度
+
+根据用户提供的业务需求、JD、规范或任务目标生成 `3-7` 个业务维度。每项必须包含要求来源、是否关键、可判定通过标准、推荐测试方法、当前证据与结论。
+
+动态维度用于判断业务适配，不并入固定 8 维总分。没有业务依据时写 `NOT_ASSESSED`，不得凭常识虚构验收要求。
+
+### 4. 检查 6 道工程门
+
+按 [rubric.md](references/rubric.md) 检查 `G1 STRUCTURE`、`G2 INPUT`、`G3 EXECUTION`、`G4 OUTPUT`、`G5 COMPATIBILITY`、`G6 REGRESSION`。
+
+门禁结论只能使用 `PASS / PARTIAL / FAIL / NOT_TESTED / BLOCKED`。静态文档写了异常处理，只能证明“有设计”，不能据此把工程门写成 `PASS`。
+
+### 5. 判定证据成熟度
+
+- `E0 CLAIM_ONLY`：只有描述、设想或作者声明。
+- `E1 STATIC_REVIEWED`：已检查 Skill 文件和结构，未运行真实任务。
+- `E2 CONTROLLED_TESTED`：有本地/受控环境的触发和功能测试结果。
+- `E3 PLATFORM_VALIDATED`：在目标平台完成兼容、异常和回归验证。
+- `E4 OPERATED`：有多轮回归、灰度或线上使用数据及 badcase 闭环。
+
+最终结论不得高于证据等级允许的强度。
+
+### 6. 给出最终状态
+
+按以下顺序判断：
+
+- `BLOCKED`：关键文件、环境、权限或依赖缺失，导致核心评估无法继续。
+- `NEEDS_REVISION`：固定设计分低于 `7.5`，或 D1/D2/D4/D5 任一低于 `6.0`，或关键业务标准已 `FAIL`，或工程门已 `FAIL`。
+- `DESIGN_PASS`：总分至少 `7.5`，且 D1/D2/D4/D5 都不低于 `6.0`；最高只需 E1。
+- `TEST_PASS`：已达到 DESIGN_PASS，关键业务测试通过，G1/G2/G3/G4/G6 有受控测试证据；最低 E2。
+- `RELEASE_READY`：已达到 TEST_PASS，六道工程门全部 PASS，目标平台、降级和回归证据齐全；最低 E3。
+
+`E4 OPERATED` 是发布后的稳定运行证据，不是 `RELEASE_READY` 的前置条件。静态检查无论得分多高，最终状态最高只能是 `DESIGN_PASS`。
+
+### 7. 可选交叉评估
+
+用户明确要求“多模型评估”“交叉验证”，或评估结论用于高风险发布时，读取 [cross-validation.md](references/cross-validation.md)。默认单评估者模式不强制扩展，以免为低风险任务增加不必要成本。
+
+## 最低测试集
+
+没有现成评测集时，建议但不要伪装成已执行：
+
+- `8-10` 条应触发 query：正式、口语、隐式、带附件场景。
+- `8-10` 条不应触发 query：重点覆盖相邻但应由其他 Skill 处理的请求。
+- `3-5` 条标准功能任务。
+- `2-4` 条缺失输入、权限不足、工具失败或超时任务。
+- 至少 `1` 条超长输入、多对象或平台差异任务。
+- 新旧版本或有/无 Skill 对照，记录完成率、漏步骤、误触发、失败分类、耗时和人工接受情况。
+
+## 输出要求
+
+严格使用 [report-template.md](references/report-template.md)。先给真实结论，再给证据、风险、缺口和下一步。
+
+当目标 AI 不支持加载 Skill 目录时，直接向其提供 [portable-prompt.md](references/portable-prompt.md) 和待评估材料。
+
+改进项按优先级排序：
+
+- `P0`：安全、数据损坏、错误执行、核心输入门控或主结果丢失。
+- `P1`：触发、主流程、关键业务标准、异常恢复或目标平台阻塞。
+- `P2`：结构、成本、维护性、表达和非关键体验。
+
+每项建议必须说明修改位置、验收方式和失败后果。只给“优化 Prompt”“增加示例”之类泛化建议视为不合格。
+
+## 边界
+
+- 不因目录多、文字长或多模型评分而自动给高分。
+- 不要求小型 Skill 为了形式补齐所有资源目录；确实不需要资源时，D6 按上游规则以 `N/A=7` 计分。
+- 不把模型自评当独立验证；需要原始 query、输出、日志或人工结论。
+- 不把 `DESIGN_PASS` 表述为已测试，不把 `TEST_PASS` 表述为已上线，不把 `RELEASE_READY` 表述为线上稳定运行。
+- 对比多个 Skill 时统一使用固定 8 维；动态业务维度只有在业务目标一致时才横向比较。

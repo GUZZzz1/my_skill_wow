@@ -33,7 +33,7 @@
     <tr>
       <td>Skill 评估</td>
       <td><code>evaluate-skill-quality</code></td>
-      <td>D1-D9 评估与准入建议</td>
+      <td>8 维设计评分与上线准入</td>
       <td><a href="./skills/evaluate-skill-quality/"><code>查看完整源码</code></a></td>
       <td><a href="#evaluate-skill-quality"><code>查看安装方式</code></a></td>
     </tr>
@@ -73,7 +73,9 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
 
 ### evaluate-skill-quality
 
-用于评估新建或已有 Skill，输出 D1-D9 评分、硬门槛、准入建议，以及给用户和 Agent 的可验收优化任务。D1-D8 来自原有八维框架，D9“评测闭环 / 可验证性”是扩展项。
+用于评估新建或已有 Skill。固定 8 维评分用于判断设计质量；动态业务维度用于判断业务适配；六道工程门与 E0-E4 证据等级用于判断是否达到 `DESIGN_PASS`、`TEST_PASS` 或 `RELEASE_READY`。需要时可执行独立评分、分歧互审和仲裁。评测闭环通过真实测试和回归证据体现，不作为第 9 个加权维度。
+
+固定 8 维及交叉评估方法源自 MIT 许可的 [`sunxingboo/skill-evaluator`](https://github.com/sunxingboo/skill-evaluator)；工程准入层是本仓库扩展。该方法不是 OpenAI 官方评分标准。[查看标准来源与边界](./skills/evaluate-skill-quality/references/standard-basis.md)。
 
 **方式一：复制到 Codex（推荐）**
 
@@ -124,8 +126,10 @@ my_skill_wow/
     │   └── references/
     ├── evaluate-skill-quality/
     │   ├── SKILL.md
+    │   ├── LICENSE
     │   ├── agents/
-    │   └── references/
+    │   ├── references/
+    │   └── scripts/
     └── manage-skill-repository/
         ├── SKILL.md
         ├── agents/
