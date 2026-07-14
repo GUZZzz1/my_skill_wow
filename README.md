@@ -44,6 +44,13 @@
       <td><a href="./skills/manage-skill-repository/"><code>查看完整源码</code></a></td>
       <td><a href="#manage-skill-repository"><code>查看安装方式</code></a></td>
     </tr>
+    <tr>
+      <td>思维沉淀助手</td>
+      <td><code>knowledge-precipitator</code></td>
+      <td>多轮审查长篇技术资料并沉淀结构化知识</td>
+      <td><a href="./skills/knowledge-precipitator/"><code>查看完整源码</code></a></td>
+      <td><a href="#knowledge-precipitator"><code>查看安装方式</code></a></td>
+    </tr>
   </tbody>
 </table>
 
@@ -92,6 +99,40 @@ py "$installerDir/my_skill_wow/scripts/install-skill.py" --skill weekly-research
 ```
 
 Windows 未提供 `py` 命令时，将上面的 `py` 改为 `python`。
+
+### knowledge-precipitator
+
+用于对技术文章、内部方案、架构说明、测试文档和代码示例执行多轮覆盖审查，区分原文事实、分析推导与个人产出，并沉淀为可追溯的结构化知识。
+
+**方式一：交给 AI 编程 Agent 自动安装（推荐）**
+
+```text
+请从 GitHub 仓库 GUZZzz1/my_skill_wow 只安装 skills/knowledge-precipitator，不要完整克隆或安装整个仓库。
+
+先识别你当前运行的 AI 编程 Agent 及其实际支持的 Skill 目录，不要臆造路径。自动模式下，直接安装到该 Agent 的用户级标准目录，供我的所有工作区使用：Codex 或通用 Agent Skills 使用用户主目录中的 `.agents/skills`，Claude Code 使用用户主目录中的 `.claude/skills`，其他 Agent 遵循自身官方约定。无法判断当前 Agent 或存在多个有效目录时，先给出建议路径并询问我。
+
+优先使用仓库提供的 `scripts/install-skill.py`，以 `--scope user` 和识别到的 `--agent` 参数安装；也可以使用当前 Agent 的等价原生安装方式，但最终目录必须符合上面的约定。只下载目标 Skill 子目录。目标目录已存在时不要覆盖，先说明现有版本与仓库版本的差异并询问我。安装后检查 SKILL.md、references/REFLECTION-CHECKLIST.md 和 references/OUTPUT-TEMPLATE.md 是否存在，告诉我实际安装路径，并说明是否需要新建任务或重新加载 Agent。
+```
+
+**方式二：安装到当前工作区（终端）**
+
+macOS / Linux：
+
+```bash
+installer_dir="$(mktemp -d)"
+git clone --depth 1 --filter=blob:none --sparse https://github.com/GUZZzz1/my_skill_wow.git "$installer_dir/my_skill_wow"
+git -C "$installer_dir/my_skill_wow" sparse-checkout set scripts skills/knowledge-precipitator
+python3 "$installer_dir/my_skill_wow/scripts/install-skill.py" --skill knowledge-precipitator --source-root "$installer_dir/my_skill_wow" --scope workspace --agent auto
+```
+
+Windows PowerShell：
+
+```powershell
+$installerDir = Join-Path $env:TEMP ("my-skill-wow-" + [guid]::NewGuid())
+git clone --depth 1 --filter=blob:none --sparse https://github.com/GUZZzz1/my_skill_wow.git "$installerDir/my_skill_wow"
+git -C "$installerDir/my_skill_wow" sparse-checkout set scripts skills/knowledge-precipitator
+py "$installerDir/my_skill_wow/scripts/install-skill.py" --skill knowledge-precipitator --source-root "$installerDir/my_skill_wow" --scope workspace --agent auto
+```
 
 ### evaluate-skill-quality
 
@@ -188,7 +229,11 @@ my_skill_wow/
     │   ├── agents/
     │   ├── references/
     │   └── scripts/
-    └── manage-skill-repository/
+    ├── manage-skill-repository/
+    │   ├── SKILL.md
+    │   ├── agents/
+    │   └── references/
+    └── knowledge-precipitator/
         ├── SKILL.md
         ├── agents/
         └── references/

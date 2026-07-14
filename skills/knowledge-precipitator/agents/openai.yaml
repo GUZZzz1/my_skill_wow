@@ -1,0 +1,6 @@
+interface:
+  display_name: "思维沉淀助手"
+  short_description: "多轮审查长篇技术资料并沉淀为可复用、可追溯的结构化知识"
+  default_prompt: "Use $knowledge-precipitator to review and precipitate this technical material without losing important details."
+policy:
+  allow_implicit_invocation: true
